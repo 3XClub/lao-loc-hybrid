@@ -1,99 +1,51 @@
-
 <!doctype html>
-<html lang="ko">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Lao-LOC+ Hybrid Strict</title>
-  <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
-<div class="wrap">
-  <header>
-    <div>
-      <h1>Lao-LOC+ Hybrid Strict</h1>
-      <p>Layer별 수익 실현 + 현금 재순환</p>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lao-LOC+ Hybrid Strict</title><link rel="stylesheet" href="/static/style.css"></head>
+<body><div class="wrap">
+<header><div><h1>Lao-LOC+ Hybrid Strict</h1><p>무료 Refresh형 · Layer별 수익 실현 + 현금 재순환</p></div>
+<div class="actions"><button id="refreshBtn" class="primary">최신 중계표 새로고침</button><button id="exportBtn">백업</button>
+<label class="fileBtn">복원<input id="importFile" type="file" accept=".json"></label></div></header>
+
+<section class="settingsBar">
+  <div>
+    <span>운용 시작금</span>
+    <div class="settingInput">
+      <span>$</span><input id="budgetInput" type="number" min="100" step="100" value="10000">
+      <button id="applyBudgetBtn" class="primary" type="button">적용</button>
     </div>
-    <button id="genBtn" class="primary">중계표 지금 생성</button>
-  </header>
-
-  <section class="cards" id="cards">
-    <div class="card"><span>총 평가자산</span><b id="equity">-</b></div>
-    <div class="card"><span>현금</span><b id="cash">-</b></div>
-    <div class="card"><span>SOXL 보유</span><b id="qty">-</b></div>
-    <div class="card"><span>전체 평단</span><b id="avg">-</b></div>
-    <div class="card"><span>현금비율</span><b id="cashRatio">-</b></div>
-    <div class="card"><span>전체 손익</span><b id="totalPnl">-</b></div>
-  </section>
-
-  <nav class="tabs">
-    <button class="tab active" data-tab="today">오늘 중계표</button>
-    <button class="tab" data-tab="fill">체결 입력</button>
-    <button class="tab" data-tab="layers">Layer Ledger</button>
-    <button class="tab" data-tab="history">중계표 기록</button>
-    <button class="tab" data-tab="fills">체결 기록</button>
-  </nav>
-
-  <main>
-    <section id="today" class="panel tabPanel active">
-      <div class="panelHead">
-        <div>
-          <h2>오늘 중계표</h2>
-          <p id="signalMeta">아직 생성된 중계표가 없습니다.</p>
-        </div>
-        <span id="hybridBadge" class="badge">Hybrid Strict -</span>
-      </div>
-      <div class="metrics">
-        <div><span>기준 종가</span><b id="sigClose">-</b></div>
-        <div><span>ADX(14)</span><b id="sigAdx">-</b></div>
-        <div><span>20일 수익률</span><b id="sigRet">-</b></div>
-      </div>
-      <div class="tableWrap"><table>
-        <thead><tr><th>구분</th><th>슬롯</th><th>LOC 가격</th><th>수량</th><th>Layer</th><th>Layer 손익</th><th>상태</th></tr></thead>
-        <tbody id="ordersBody"><tr><td colspan="7" class="empty">중계표를 생성해 주세요.</td></tr></tbody>
-      </table></div>
-      <p class="note" id="signalNote"></p>
-    </section>
-
-    <section id="fill" class="panel tabPanel">
-      <h2>실제 체결 입력</h2>
-      <p>사용자는 실제 체결가와 수량만 기록하면 됩니다.</p>
-      <form id="fillForm" class="formGrid">
-        <label>매수/매도<select id="side"><option value="BUY">매수</option><option value="SELL">매도</option></select></label>
-        <label>체결일<input id="tradeDate" type="date" required></label>
-        <label>체결가 ($)<input id="fillPrice" type="number" min="0.01" step="0.01" required></label>
-        <label>수량<input id="fillQty" type="number" min="1" step="1" required></label>
-        <label>주문 슬롯<select id="orderSlot"><option>Buy1</option><option>Buy2</option><option>Sell1</option><option>Sell2</option><option>Sell3</option><option>Manual</option></select></label>
-        <label id="layerField" class="hidden">매도 Layer<select id="layerSelect"></select></label>
-        <label class="full">메모<input id="fillNote" type="text" placeholder="선택사항"></label>
-        <button class="primary full" type="submit">체결 기록</button>
-      </form>
-      <div id="formMsg" class="msg"></div>
-    </section>
-
-    <section id="layers" class="panel tabPanel">
-      <h2>Layer Ledger</h2>
-      <p>전체 계좌가 손실이어도 개별 Layer가 순이익이면 정상 익절 대상입니다.</p>
-      <div class="tableWrap"><table>
-        <thead><tr><th>Layer</th><th>생성일</th><th>매수가</th><th>비용포함 원가</th><th>잔여</th><th>현재 손익</th></tr></thead>
-        <tbody id="layersBody"></tbody>
-      </table></div>
-    </section>
-
-    <section id="history" class="panel tabPanel">
-      <h2>중계표 기록</h2>
-      <div id="signalHistory" class="historyList"></div>
-    </section>
-
-    <section id="fills" class="panel tabPanel">
-      <h2>체결 기록</h2>
-      <div class="tableWrap"><table>
-        <thead><tr><th>일자</th><th>구분</th><th>가격</th><th>수량</th><th>Layer</th><th>실현손익</th></tr></thead>
-        <tbody id="fillsBody"></tbody>
-      </table></div>
-    </section>
-  </main>
-</div>
-<script src="/static/app.js"></script>
-</body>
-</html>
+  </div>
+  <div>
+    <span>Line 수</span>
+    <b>13 Lines</b>
+  </div>
+  <div>
+    <span>1 Line 예산</span>
+    <b id="lineBudget">$769.23</b>
+  </div>
+  <div>
+    <span>수량 계산</span>
+    <b id="sizeRule">INT(Line ÷ Target)</b>
+  </div>
+</section>
+<div id="wakeMsg" class="wake hidden">무료 서버가 잠들어 있으면 첫 로딩에 약 1분 걸릴 수 있습니다. 그대로 기다려 주세요.</div>
+<section class="cards">
+<div class="card"><span>총 평가자산</span><b id="equity">-</b></div><div class="card"><span>현금</span><b id="cash">-</b></div>
+<div class="card"><span>SOXL 보유</span><b id="qty">0주</b></div><div class="card"><span>전체 평단</span><b id="avg">-</b></div>
+<div class="card"><span>현금비율</span><b id="cashRatio">-</b></div><div class="card"><span>전체 손익</span><b id="totalPnl">-</b></div></section>
+<nav class="tabs"><button class="tab active" data-tab="today">오늘 중계표</button><button class="tab" data-tab="fill">체결 입력</button>
+<button class="tab" data-tab="layers">Layer Ledger</button><button class="tab" data-tab="history">중계표 기록</button><button class="tab" data-tab="fills">체결 기록</button></nav>
+<main>
+<section id="today" class="panel tabPanel active"><div class="panelHead"><div><h2>오늘 중계표</h2><p id="signalMeta">페이지를 열면 자동으로 최신 중계표를 계산합니다.</p></div><span id="hybridBadge" class="badge">Hybrid Strict -</span></div>
+<div class="metrics"><div><span>기준 종가</span><b id="sigClose">-</b></div><div><span>ADX(14)</span><b id="sigAdx">-</b></div><div><span>20일 수익률</span><b id="sigRet">-</b></div></div>
+<div class="tableWrap"><table><thead><tr><th>구분</th><th>슬롯</th><th>LOC 가격</th><th>수량</th><th>Layer</th><th>Layer 손익</th><th>상태</th></tr></thead><tbody id="ordersBody"><tr><td colspan="7" class="empty">계산 중...</td></tr></tbody></table></div>
+<p class="note" id="signalNote"></p></section>
+<section id="fill" class="panel tabPanel"><h2>실제 체결 입력</h2><p>실제 체결가와 수량만 입력하세요.</p>
+<form id="fillForm" class="formGrid"><label>구분<select id="side"><option value="BUY">매수</option><option value="SELL">매도</option></select></label>
+<label>체결일<input id="tradeDate" type="date" required></label><label>체결가 ($)<input id="fillPrice" type="number" min="0.01" step="0.01" required></label>
+<label>수량<input id="fillQty" type="number" min="1" step="1" required></label><label>주문 슬롯<select id="orderSlot"><option>Buy1</option><option>Buy2</option><option>Sell1</option><option>Sell2</option><option>Sell3</option><option>Manual</option></select></label>
+<label id="layerField" class="hidden">매도 Layer<select id="layerSelect"></select></label><label class="full">메모<input id="fillNote" type="text"></label><button class="primary full" type="submit">체결 기록</button></form><div id="formMsg" class="msg"></div></section>
+<section id="layers" class="panel tabPanel"><h2>Layer Ledger</h2><p>전체 계좌 손익과 개별 Layer 손익을 분리합니다.</p><div class="tableWrap"><table><thead><tr><th>Layer</th><th>생성일</th><th>매수가</th><th>비용포함 원가</th><th>잔여</th><th>현재 손익</th></tr></thead><tbody id="layersBody"></tbody></table></div></section>
+<section id="history" class="panel tabPanel"><h2>중계표 기록</h2><div id="signalHistory" class="historyList"></div></section>
+<section id="fills" class="panel tabPanel"><h2>체결 기록</h2><div class="tableWrap"><table><thead><tr><th>일자</th><th>구분</th><th>가격</th><th>수량</th><th>Layer</th><th>실현손익</th></tr></thead><tbody id="fillsBody"></tbody></table></div></section>
+</main><p class="footerNote">기록은 현재 브라우저에 저장됩니다. 정기적으로 “백업” 버튼으로 JSON 파일을 저장하세요.</p>
+</div><script src="/static/app.js"></script></body></html>

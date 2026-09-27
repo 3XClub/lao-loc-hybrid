@@ -2,14 +2,6 @@ services:
   - type: web
     name: lao-loc-hybrid
     runtime: python
+    plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn --workers 1 --threads 4 --timeout 120 app:app
-    envVars:
-      - key: APP_TIMEZONE
-        value: Asia/Ho_Chi_Minh
-      - key: DATABASE_PATH
-        value: /var/data/lao_loc.db
-    disk:
-      name: lao-loc-data
-      mountPath: /var/data
-      sizeGB: 1
