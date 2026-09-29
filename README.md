@@ -34,3 +34,9 @@
 3. 내장 SOXL fallback (2026-09-25까지)
 
 따라서 Render에서 yfinance가 막혀도 direct Yahoo가 먼저 시도됩니다.
+
+
+## v0.8 TARGET PROFIT FIX
+- 매도 주문 활성화는 현재 종가가 아니라 Sell Target 체결 시 수수료 포함 순손익으로 판단
+- 현재가가 소폭 마이너스여도 Target 체결 기준 순이익이면 정상 익절 주문 활성
+- 중계표 손익 열은 Target 체결 손익 기준

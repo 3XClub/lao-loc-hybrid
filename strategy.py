@@ -48,11 +48,15 @@ def build_signal_from_client(bars,payload):
     recent_layers=sorted(layers,key=lambda x:int(x.get("id",0)),reverse=True)
     for i,l in enumerate(recent_layers[:3]):
         eff=float(l.get("effective_cost",float(l["fill_price"])*(1+FEE)))
-        pnl=close*(1-FEE)/eff-1; profitable=pnl>0
-        orders.append({"kind":"SELL","slot":["Sell2","Sell1","Sell3"][i],"target":rp(float(l["fill_price"])*1.0015),
+        target=rp(float(l["fill_price"])*1.0015)
+        current_pnl=close*(1-FEE)/eff-1
+        target_pnl=target*(1-FEE)/eff-1
+        target_profitable=target_pnl>0
+        orders.append({"kind":"SELL","slot":["Sell2","Sell1","Sell3"][i],"target":target,
                        "qty":int(l["remaining_qty"]),"layer_id":int(l["id"]),"layer_price":float(l["fill_price"]),
-                       "layer_pnl_pct":pnl,"active":profitable or hybrid,
-                       "status":"정상 익절" if profitable else ("Hybrid Strict 손실 Exit 허용" if hybrid else "손실 Layer 보류")})
+                       "current_layer_pnl_pct":current_pnl,"target_pnl_pct":target_pnl,
+                       "layer_pnl_pct":target_pnl,"active":target_profitable or hybrid,
+                       "status":"정상 익절 주문" if target_profitable else ("Hybrid Strict 손실 Exit 허용" if hybrid else "손실 Layer 보류")})
     return {"market_date":market_date,"close":close,"adx14":adx,"ret20":ret20,"hybrid_strict":hybrid,
             "account":account,"orders":orders,
             "note":"Layer별 수익 실현 + 현금 재순환. "+("Hybrid Strict ON" if hybrid else "Hybrid Strict OFF")}
