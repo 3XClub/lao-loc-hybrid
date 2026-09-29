@@ -17,3 +17,20 @@
 - 매도수량은 실제 Layer 잔여수량 기준
 - 거래 전 시작금 변경: 현금도 새 시작금으로 재설정
 - 거래 후 시작금 변경: 차액을 입금/출금으로 반영하고 이후 Line 크기 변경
+
+
+## v0.6 FIX
+- Render/Yahoo 시세 호출이 실패해도 중계표가 빈 화면이 되지 않도록 수정
+- 2026-09-25까지 SOXL 백업 일봉 내장
+- live yfinance 데이터가 들어오면 백업 데이터와 자동 병합
+- API 오류는 항상 JSON으로 반환
+- 브라우저가 빈 응답/HTML 에러 응답을 안전하게 처리
+- 화면에 '실시간 시세' 또는 '내장 백업 시세' 표시
+
+## v0.7 ROBUST
+시세 연결 순서:
+1. Yahoo direct chart JSON
+2. yfinance
+3. 내장 SOXL fallback (2026-09-25까지)
+
+따라서 Render에서 yfinance가 막혀도 direct Yahoo가 먼저 시도됩니다.
