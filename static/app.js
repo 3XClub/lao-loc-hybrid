@@ -1,9 +1,26 @@
-const KEY='laoLocHybridStateV05',OLD_KEY='laoLocHybridStateV04',FEE=0.0002,$=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);const money=n=>n==null?'—':'$'+Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}),pct=n=>n==null?'—':(n*100).toFixed(2)+'%';function def(){return{initial_budget:10000,cash:10000,nextLayerId:1,layers:[],fills:[],signals:[],last_close:null}}function load(){
+const KEY='laoLocHybridStateV09',OLD_KEY='laoLocHybridStateV08',FEE=0.0002,$=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);const money=n=>n==null?'—':'$'+Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}),pct=n=>n==null?'—':(n*100).toFixed(2)+'%';function def(){return{initial_budget:10000,cash:10000,nextLayerId:1,layers:[],fills:[],signals:[],last_close:null}}function load(){
   try{
     const raw=localStorage.getItem(KEY)||localStorage.getItem(OLD_KEY)||'{}';
     return {...def(),...JSON.parse(raw)};
   }catch(e){return def()}
-}let state=load();function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+}let state=load();async function save(){
+  localStorage.setItem(KEY,JSON.stringify(state)); // emergency cache only
+  try{
+    const r=await fetch('/api/state',{
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(state)
+    });
+    if(!r.ok){
+      const t=await r.text();
+      throw new Error(t||'cloud save failed');
+    }
+    window.__cloudSaved=true;
+  }catch(e){
+    window.__cloudSaved=false;
+    console.error('Cloud save failed',e);
+  }
+}
 function lineBudget(){return state.initial_budget/13}
 function updateBudgetUI(){
   $('#budgetInput').value=Number(state.initial_budget||10000).toFixed(0);
@@ -59,4 +76,18 @@ $('#applyBudgetBtn').addEventListener('click',async()=>{
   await refreshSignal();
 });
 
-$('#exportBtn').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='lao-loc-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href)});$('#importFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{state={...def(),...JSON.parse(rd.result)};save();renderAll();refreshSignal()}catch(err){alert('백업 파일을 읽을 수 없습니다.')}};rd.readAsText(f)});$('#tradeDate').value=new Date().toISOString().slice(0,10);renderAll();refreshSignal();
+$('#exportBtn').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='lao-loc-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href)});$('#importFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{state={...def(),...JSON.parse(rd.result)};save();renderAll();refreshSignal()}catch(err){alert('백업 파일을 읽을 수 없습니다.')}};rd.readAsText(f)});$('#tradeDate').value=new Date().toISOString().slice(0,10);async function boot(){
+  try{
+    const r=await fetch('/api/state');
+    const d=await r.json();
+    if(r.ok && d.configured && d.state){
+      state={...defaultState(),...d.state};
+      localStorage.setItem(KEY,JSON.stringify(state));
+    }
+  }catch(e){
+    console.warn('Cloud state load failed; using emergency local cache.',e);
+  }
+  renderAll();
+  await refreshSignal();
+}
+boot();

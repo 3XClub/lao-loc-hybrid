@@ -2,7 +2,7 @@
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Lao-LOC+ Hybrid Strict</title><link rel="stylesheet" href="/static/style.css"></head>
 <body><div class="wrap">
-<header><div><h1>Lao-LOC+ Hybrid Strict</h1><p>무료 Refresh형 · Layer별 수익 실현 + 현금 재순환</p></div>
+<header><div><h1>Lao-LOC+ Hybrid Strict</h1><p>무료 Refresh형 · 클라우드 자동저장 · Layer별 수익 실현 + 현금 재순환</p></div>
 <div class="actions"><button id="refreshBtn" class="primary">최신 중계표 새로고침</button><button id="exportBtn">백업</button>
 <label class="fileBtn">복원<input id="importFile" type="file" accept=".json"></label></div></header>
 
@@ -47,5 +47,5 @@
 <section id="layers" class="panel tabPanel"><h2>Layer Ledger</h2><p>전체 계좌 손익과 개별 Layer 손익을 분리합니다.</p><div class="tableWrap"><table><thead><tr><th>Layer</th><th>생성일</th><th>매수가</th><th>비용포함 원가</th><th>잔여</th><th>현재 손익</th></tr></thead><tbody id="layersBody"></tbody></table></div></section>
 <section id="history" class="panel tabPanel"><h2>중계표 기록</h2><div id="signalHistory" class="historyList"></div></section>
 <section id="fills" class="panel tabPanel"><h2>체결 기록</h2><div class="tableWrap"><table><thead><tr><th>일자</th><th>구분</th><th>가격</th><th>수량</th><th>Layer</th><th>실현손익</th></tr></thead><tbody id="fillsBody"></tbody></table></div></section>
-</main><p class="footerNote">기록은 현재 브라우저에 저장됩니다. 정기적으로 “백업” 버튼으로 JSON 파일을 저장하세요.</p>
+</main><p class="footerNote">기록은 Supabase 클라우드 DB에 자동 저장됩니다. 백업 버튼은 비상용 수동 내보내기입니다.</p>
 </div><script src="/static/app.js"></script></body></html>
